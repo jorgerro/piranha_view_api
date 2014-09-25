@@ -1,5 +1,8 @@
 class Boat < ActiveRecord::Base
   
+  validates :name, presence: :true, uniqueness: :true
+  validates :capacity, presence: :true
+  
   has_many(
     :assignments,
     class_name: "Assignment",
@@ -8,6 +11,8 @@ class Boat < ActiveRecord::Base
     # inverse_of: :boat,
     # dependent_destroy: :true
   )
+  
+  has_many :timeslots, through: :assignments
 
 
 

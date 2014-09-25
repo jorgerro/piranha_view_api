@@ -3,14 +3,13 @@ PiranhaViewApi::Application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # root to:
-
-  resources :timeslots, only: [:create, :index]
-
-  resources :boats, only: [:create, :index]
-
-  resources :assignments, only: :create
-
-  resources :bookings, only: :create
+  
+  namespace :api, defaults: { format: :json } do 
+    resources :timeslots, only: [:create, :index]
+    resources :boats, only: [:create, :index]
+    resources :assignments, only: :create
+    resources :bookings, only: :create
+  end
 
 
   # You can have the root of your site routed with "root"

@@ -1,4 +1,6 @@
 class Assignment < ActiveRecord::Base
+  
+  validates :timeslot_id, :boat_id, presence: :true
 
   belongs_to(
     :timeslot,
@@ -13,6 +15,5 @@ class Assignment < ActiveRecord::Base
     foreign_key: :boat_id,
     primary_key: :id
   )
-
 
 end
