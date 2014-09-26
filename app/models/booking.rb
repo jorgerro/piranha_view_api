@@ -50,13 +50,65 @@ class Booking < ActiveRecord::Base
     return true uniq_availability >= self.size
     puts "REQUEST CANNOT BE ACCODMODATED WITHOUT SHARED BOATS"
     
-    
-        
-    
-    
+    shared_subs = subsets(shared_capacities)
+
+    shared_subs.each do |sub|
+
+      fewest_boats = nil
+      smallest_diff = nil
+
+      new_capacities = uniq_capacities + sub
+
+        if availability(self.timeslot.bookings, new_capacities) >= self.size
+
+          # if fewer than the fewest boats and diff smaller than the smallest diff
+
+
+        end
+
+
+
+    end
     
     
     false
+  end
+
+  def subsets(arr)
+
+    return [[]] if arr.empty?
+
+    val = arr[0]
+    subs = subsets(arr[1..-1])
+    new_subs = subs.map { |sub| sub + [val] }
+
+    subs.concat(new_subs) 
+    
+  end
+
+  def availability(groups, capacities)
+    
+    return 0 if capacities.empty?
+    l_cap = capacities.length
+    return capacities.max if groups.empty?
+
+    largest_availability = 0
+
+    i = 0
+    while i < l_cap
+      if capacities[i] - groups.first >= 0
+        
+        caps = capacities.dup
+        caps[i] -= groups.first
+        
+        availability = availability(groups[1..-1], caps)
+        largest_availability = availability if availability > largest_availability
+      end
+      
+      i += 1
+    end
+      
+    largest_availability
   end
   
   
