@@ -7,13 +7,10 @@ class Boat < ActiveRecord::Base
     :assignments,
     class_name: "Assignment",
     primary_key: :id,
-    foreign_key: :boat_id
-    # inverse_of: :boat,
-    # dependent_destroy: :true
-  )
+    foreign_key: :boat_id,
+    inverse_of: :boat,
+    dependent: :destroy )
   
   has_many :timeslots, through: :assignments
-
-
 
 end

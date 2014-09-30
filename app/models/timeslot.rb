@@ -6,29 +6,28 @@ class Timeslot < ActiveRecord::Base
     :assignments,
     class_name: "Assignment",
     primary_key: :id,
-    foreign_key: :timeslot_id
-    # inverse_of: :timeslot,
-    # dependent_destroy: :true
-  )
+    foreign_key: :timeslot_id,
+    inverse_of: :timeslot,
+    dependent: :destroy )
   
   has_many(
     :bookings,
     class_name: "Booking",
     primary_key: :id,
-    foreign_key: :timeslot_id
-    # inverse_of: :timeslot,
-    # dependent_destroy: :true
-  )
+    foreign_key: :timeslot_id,
+    inverse_of: :timeslot,
+    dependent: :destroy  )
   
   has_many :boats, through: :assignments
   
-  def availability(groups = self.bookings.map(&:size), capacities = self.boats.map(&:capacity))
+  def Timeslot.availability(groups, capacities)
     
-    return 0 if capacities.empty?
-    l_cap = capacities.length
+    return 0 if capacities.empty? && groups.empty?
+    return nil if capacities.empty? 
+    l_cap = capacities.length   
     return capacities.max if groups.empty?
 
-    largest_availability = 0
+    largest_availability = nil
 
     i = 0
     while i < l_cap
@@ -36,15 +35,20 @@ class Timeslot < ActiveRecord::Base
         
         caps = capacities.dup
         caps[i] -= groups.first
-        
-        availability = availability(groups[1..-1], caps)
-        largest_availability = availability if availability > largest_availability
+
+        availability = Timeslot.availability(groups[1..-1], caps)
+        largest_availability = availability if (!largest_availability || (availability && availability > largest_availability))
       end
       
       i += 1
     end
       
     largest_availability
+  end
+  
+  def availability
+    availability = Timeslot.availability(self.bookings.map(&:size), self.boats.map(&:capacity))
+    availability ? availability : 0
   end
   
   def customer_count
@@ -71,7 +75,7 @@ class Timeslot < ActiveRecord::Base
       start_time: self.start_time,
       end_time: end_time
     })
-    puts end_time
+
     if self.id.nil?
       overlapping_timeslots
     else
@@ -80,21 +84,20 @@ class Timeslot < ActiveRecord::Base
   end
   
   def shared_boats
-    
-    shared_boats = []
-    seen = {}
+    shared_boats = {}
+    own_boats = {}
     
     # populate a hash of this timeslots boat_ids
-    self.boats.each { |boat| seen[boat.id] = true }
+    self.boats.each { |boat| own_boats[boat.id] = true }
     
     # look through overlapping timeslots for any boats that they might share
     overlapping_timeslots.each do |timeslot|
       timeslot.boats.each do |boat|
-        shared_boats << boat if seen[boat.id]
+        shared_boats[boat] = true if own_boats[boat.id]
       end
     end
     
-    shared_boats
+    shared_boats.keys
   end
   
 

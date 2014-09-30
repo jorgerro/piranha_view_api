@@ -2,15 +2,12 @@ class Api::TimeslotsController < ApplicationController
   
   def create
     
-    # @timeslot = Timeslot.new(start_time: timeslot_params[start_time], duration: timeslot_params[duration])
     @timeslot = Timeslot.new(timeslot_params)
 
     if @timeslot.save
       render "api/timeslot"
     else
-      # head :bad_request
-      puts "SOMETHING WENT WRONG IN TIMESLOT CREATE"
-      render json: @timslot.errors, status: :unprocessable_entity
+      render json: @timeslot.errors, status: :unprocessable_entity
     end
     
   end
@@ -27,10 +24,6 @@ class Api::TimeslotsController < ApplicationController
       day_start: day_start.to_i,
       day_end: day_end.to_i
     })
-    # @timeslots = Timeslot.all
-    
-    p request_date
-    p @timeslots
     
     render "api/timeslots"
   end

@@ -7,7 +7,6 @@ class Api::AssignmentsController < ApplicationController
     if @assignment.save
       render json: @assignment
     else
-      # head :bad_request
       render json: @assignment.errors, status: :unprocessable_entity
     end
     

@@ -7,8 +7,6 @@ class Api::BoatsController < ApplicationController
     if @boat.save
       render json: @boat
     else
-      # head :bad_request
-      puts "SOMETHING WENT WRONG IN BOAT CREATE"
       render json: @boat.errors, status: :unprocessable_entity
     end
     

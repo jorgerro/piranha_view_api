@@ -7,7 +7,6 @@ class Api::BookingsController < ApplicationController
     if @booking.save
       render json: @booking
     else
-      # head :bad_request
       render json: @booking.errors, status: :unprocessable_entity
     end
     
